@@ -5,69 +5,53 @@ import { Input } from "./ui/input";
 import { cn } from "@/utils/cn";
 import { Textarea } from "@/components/ui/text-area";
 import { useState } from "react";
-import emailjs from "@emailjs/browser";
 
+import { sendDEmail, validateFormInputs } from "@/utils";
+import Title from "./Title";
 export const Contactform = () => {
-  const [data, setData] = useState({
-    from_name: "",
-    to_name: "",
-    message: "",
-  });
-  const handleSubmit = (e, formData) => {
+  const [sending, setSending] = useState(false);
+  const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
-    const temp = {
-      from_name: "reddaf@gmail.com",
-      to_name: "fben22286@gmail.com",
-      message: "first time",
-    };
 
-    emailjs
-      .send("service_413zpcx", "template_7mtfjthc", temp, "pQu7T7XHIZ9AYuBa0")
-      .then(
-        () => {
-          console.log("SUCCESS!");
-        },
-        (error) => {
-          console.log("FAILED...", error.text);
-        }
-      );
+    const name = document.getElementById("firstname").value;
+    const lastname = document.getElementById("lastname").value;
+    const email = document.getElementById("email").value;
+    const message = document.getElementById("message").value;
+    const formData = {
+      from_name: name + lastname || "",
+      to_name: email || "",
+      message: message || "",
+    };
+    sendDEmail(formData, sending, setSending);
   };
   return (
-    <div className=" w-full p-4 md:p-8 mx-auto rounded-none md:rounded-2xl  shadow-input bg-white dark:bg-black">
-      <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
-        Welcome to Aceternity
-      </h2>
-      <p className="text-neutral-600 text-sm max-w-sm mt-2 dark:text-neutral-300">
-        Login to aceternity if you can because we don&apos;t have a login flow
-        yet
-      </p>
-
+    <div className=" w-full py-4 md:py-8 mx-auto rounded-none md:rounded-2xl  shadow-input bg-white dark:bg-black">
       <form
-        className="my-8"
+        className="p-1"
         // onSubmit={handleSubmit}
-        action={async (formData) => {
-          const res = handleSubmit(formData);
-          console.log(res);
-        }}
+        // action="/api/form-submit"
+        onSubmit={handleSubmit}
       >
-        <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
+        <div className="grid place-items-center mb-14">
+          <Title text1="تواصل " text2="معنا" />
+        </div>
+        <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4 mt-4">
           <LabelInputContainer>
-            <Label htmlFor="firstname">First name</Label>
-            <Input id="firstname" placeholder="Tyler" type="text" />
+            <Label htmlFor="firstname">الاسم</Label>
+            <Input id="firstname" placeholder="يبريسي" type="text" />
           </LabelInputContainer>
           <LabelInputContainer>
-            <Label htmlFor="lastname">Last name</Label>
-            <Input id="lastname" placeholder="Durden" type="text" />
+            <Label htmlFor="lastname">اللقب</Label>
+            <Input id="lastname" placeholder="سعداوي" type="text" />
           </LabelInputContainer>
         </div>
         <LabelInputContainer className="mb-4">
-          <Label htmlFor="email">Email Address</Label>
+          <Label htmlFor="email">البريد الالكتروني</Label>
           <Input id="email" placeholder="projectmayhem@fc.com" type="email" />
         </LabelInputContainer>
         <LabelInputContainer className="mb-4">
           <Label htmlFor="message"></Label>
-          <Textarea placeholder="message" />
+          <Textarea placeholder="السلام عليكم" id="message" />
         </LabelInputContainer>
 
         <div className="grid place-items-center">
@@ -75,7 +59,7 @@ export const Contactform = () => {
             className="bg-gradient-to-br max-w-[100px] relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
             type="submit"
           >
-            send
+            {sending ? "sending" : "ارسال"}
             <BottomGradient />
           </button>
         </div>
